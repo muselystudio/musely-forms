@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Print Quote Request | Musely Studio</title>
+<style>
+  :root {
+    --purple: #5B2D8E;
+    --purple-mid: #7B4AB8;
+    --purple-light: #EDE9F5;
+    --purple-xlight: #F8F5FD;
+    --green: #1A7A4A;
+    --green-light: #E6F4EC;
+    --orange: #C25A00;
+    --orange-light: #FDF0E6;
+    --black: #1A1A1A;
+    --gray-dark: #4A4A4A;
+    --gray: #F5F5F5;
+    --gray-mid: #E8E8E8;
+    --border: #D8D0EA;
+    --border-focus: #5B2D8E;
+    --white: #FFFFFF;
+    --shadow: 0 2px 12px rgba(91,45,142,0.10);
+    --shadow-lg: 0 8px 32px rgba(91,45,142,0.15);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--purple-xlight);
+    color: var(--black);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── WRAPPER ── */
+  .form-page { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* ── HEADER ── */
+  .form-header { text-align: center; margin-bottom: 36px; }
+  .form-header-label {
+    display: inline-block;
+    background: var(--purple);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .form-header h1 {
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 800;
+    color: var(--purple);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .form-header p {
+    font-size: 16px;
+    color: var(--gray-dark);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 36px;
+  }
+  .progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .progress-step-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gray-mid);
+    border: 2px solid var(--gray-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #999;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+  .progress-step.active .progress-step-dot {
+    background: var(--purple); border-color: var(--purple); color: white;
+  }
+  .progress-step.done .progress-step-dot {
+    background: var(--green); border-color: var(--green); color: white;
+  }
+  .progress-step-label {
+    font-size: 11px; font-weight: 600; color: #aaa;
+    text-align: center; white-space: nowrap;
+  }
+  .progress-step.active .progress-step-label { color: var(--purple); }
+  .progress-step.done .progress-step-label { color: var(--green); }
+  .progress-line {
+    height: 2px; width: 60px; background: var(--gray-mid);
+    margin-bottom: 18px; transition: background 0.3s ease;
+    flex-shrink: 0;
+  }
+  .progress-line.done { background: var(--green); }
+
+  /* ── CARD ── */
+  .form-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .form-card-header {
+    background: var(--purple);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .form-card-header-icon {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .form-card-header-text h2 {
+    font-size: 18px; font-weight: 700; color: white; margin-bottom: 2px;
+  }
+  .form-card-header-text p { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .form-card-body { padding: 28px; }
+
+  /* ── FIELD GROUPS ── */
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .field-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
+  .field-row.full { grid-template-columns: 1fr; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  label .required { color: var(--purple); font-size: 15px; line-height: 1; }
+  label .hint {
+    font-weight: 400;
+    color: #888;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--black);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235B2D8E' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(91,45,142,0.12);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+
+  /* ── PRODUCT SELECTOR ── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .product-option { position: relative; }
+  .product-option input[type="radio"] {
+    position: absolute; opacity: 0; width: 0; height: 0;
+  }
+  .product-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 10px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-dark);
+    background: var(--gray);
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .product-option label .product-icon { font-size: 24px; }
+  .product-option input:checked + label {
+    border-color: var(--purple);
+    background: var(--purple-light);
+    color: var(--purple);
+  }
+  .product-option label:hover {
+    border-color: var(--purple-mid);
+    background: var(--purple-xlight);
+  }
+
+  /* ── TAG SELECTORS (sizes, stocks, etc.) ── */
+  .tag-select { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-select input[type="radio"],
+  .tag-select input[type="checkbox"] {
+    position: absolute; opacity: 0; width: 0; height: 0;
+  }
+  .tag-select label {
+    padding: 6px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-dark);
+    background: var(--gray);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .tag-select input:checked + label {
+    border-color: var(--purple);
+    background: var(--purple);
+    color: white;
+  }
+  .tag-select label:hover { border-color: var(--purple-mid); background: var(--purple-light); color: var(--purple); }
+  .tag-select input:checked + label:hover { background: var(--purple); color: white; }
+
+  /* ── TOGGLE SWITCH ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--gray);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .toggle-row-text { font-size: 14px; font-weight: 600; color: var(--black); }
+  .toggle-row-sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .toggle {
+    position: relative;
+    width: 42px; height: 24px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: var(--gray-mid);
+    border-radius: 12px;
+    transition: 0.2s;
+    cursor: pointer;
+  }
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle input:checked ~ .toggle-slider { background: var(--purple); }
+  .toggle input:checked ~ .toggle-slider::before { transform: translateX(18px); }
+
+  /* ── CONDITIONAL SECTIONS ── */
+  .conditional {
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+  .conditional.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    border: none;
+    border-top: 1.5px solid var(--gray-mid);
+    margin: 24px 0;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--purple);
+    margin-bottom: 14px;
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--orange-light);
+    border-left: 4px solid var(--orange);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #5A3200;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .info-box strong { color: var(--orange); }
+
+  .success-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #0D3D23;
+    margin-bottom: 16px;
+  }
+
+  /* ── SUBMIT BUTTON ── */
+  .submit-area { text-align: center; margin-top: 8px; }
+  .btn-submit {
+    display: inline-block;
+    background: var(--purple);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 48px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    letter-spacing: 0.3px;
+  }
+  .btn-submit:hover {
+    background: var(--purple-mid);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+  }
+  .btn-submit:active { transform: translateY(0); }
+  .submit-note { font-size: 12px; color: #888; margin-top: 10px; }
+
+  /* ── SUCCESS STATE ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 28px;
+  }
+  .success-screen.visible { display: block; }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 24px;
+  }
+  .success-screen h2 { font-size: 26px; font-weight: 800; color: var(--purple); margin-bottom: 12px; }
+  .success-screen p { font-size: 16px; color: var(--gray-dark); max-width: 400px; margin: 0 auto 24px; }
+  .btn-reset {
+    display: inline-block;
+    background: var(--purple-light);
+    color: var(--purple);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 12px 28px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+  }
+
+  /* ── CHAR COUNTER ── */
+  .char-counter { text-align: right; font-size: 11px; color: #aaa; margin-top: 4px; }
+
+  /* ── FILE UPLOAD ── */
+  .file-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--gray);
+    position: relative;
+  }
+  .file-upload-area:hover, .file-upload-area.dragover {
+    border-color: var(--purple);
+    background: var(--purple-xlight);
+  }
+  .file-upload-area input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .file-upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .file-upload-text { font-size: 14px; font-weight: 600; color: var(--purple); }
+  .file-upload-sub { font-size: 12px; color: #888; margin-top: 4px; }
+  .file-name { font-size: 13px; color: var(--green); font-weight: 600; margin-top: 8px; display: none; }
+
+  @media (max-width: 560px) {
+    .field-row { grid-template-columns: 1fr; }
+    .field-row.thirds { grid-template-columns: 1fr 1fr; }
+    .form-card-body { padding: 20px; }
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="form-page">
+
+  <!-- HEADER -->
+  <div class="form-header">
+    <div class="form-header-label">&#128196; Printing Services</div>
+    <h1>Request a Print Quote</h1>
+    <p>Fill in your requirements below and we&rsquo;ll come back with a full quote within 1 working day.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-step active" id="step1-indicator">
+      <div class="progress-step-dot">1</div>
+      <div class="progress-step-label">Product</div>
+    </div>
+    <div class="progress-line" id="line1"></div>
+    <div class="progress-step" id="step2-indicator">
+      <div class="progress-step-dot">2</div>
+      <div class="progress-step-label">Spec</div>
+    </div>
+    <div class="progress-line" id="line2"></div>
+    <div class="progress-step" id="step3-indicator">
+      <div class="progress-step-dot">3</div>
+      <div class="progress-step-label">Finishing</div>
+    </div>
+    <div class="progress-line" id="line3"></div>
+    <div class="progress-step" id="step4-indicator">
+      <div class="progress-step-dot">4</div>
+      <div class="progress-step-label">Details</div>
+    </div>
+  </div>
+
+  <form id="quoteForm" action="https://formspree.io/f/xykngdgj" method="POST">
+
+    <!-- ══ CARD 1: PRODUCT ══ -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-header-icon">&#128196;</div>
+        <div class="form-card-header-text">
+          <h2>1. Choose Your Product</h2>
+          <p>Select the print product you need a quote for</p>
+        </div>
+      </div>
+      <div class="form-card-body">
+
+        <div class="field">
+          <div class="product-grid">
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_flyers" value="Flyers" required>
+              <label for="prod_flyers"><span class="product-icon">&#128196;</span>Flyers</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_leaflets" value="Folded Leaflets">
+              <label for="prod_leaflets"><span class="product-icon">&#128210;</span>Folded Leaflets</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_posters" value="Posters">
+              <label for="prod_posters"><span class="product-icon">&#127912;</span>Posters</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_booklets" value="Stapled Booklets">
+              <label for="prod_booklets"><span class="product-icon">&#128218;</span>Stapled Booklets</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_bizcard" value="Business Cards">
+              <label for="prod_bizcard"><span class="product-icon">&#128197;</span>Business Cards</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_labels" value="Labels & Stickers">
+              <label for="prod_labels"><span class="product-icon">&#127991;</span>Labels &amp; Stickers</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_banners" value="Outdoor Banners">
+              <label for="prod_banners"><span class="product-icon">&#127383;</span>Outdoor Banners</label>
+            </div>
+            <div class="product-option">
+              <input type="radio" name="product" id="prod_other" value="Other / Not Sure">
+              <label for="prod_other"><span class="product-icon">&#10067;</span>Not Sure</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ CARD 2: SPEC ══ -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-header-icon">&#128266;</div>
+        <div class="form-card-header-text">
+          <h2>2. Size &amp; Specification</h2>
+          <p>Tell us the details of what you need</p>
+        </div>
+      </div>
+      <div class="form-card-body">
+
+        <!-- SIZE — Standard products -->
+        <div class="conditional" id="section-size-standard">
+          <div class="section-title">Size</div>
+          <div class="field">
+            <div class="tag-select" id="sizeTagSelect">
+              <!-- populated by JS -->
+            </div>
+            <div class="conditional" id="custom-size-fields" style="margin-top:12px;">
+              <div class="field-row">
+                <div class="field">
+                  <label for="custom_width">Width (mm)</label>
+                  <input type="number" id="custom_width" name="custom_width" placeholder="e.g. 150" min="100" max="420">
+                </div>
+                <div class="field">
+                  <label for="custom_height">Height (mm)</label>
+                  <input type="number" id="custom_height" name="custom_height" placeholder="e.g. 210" min="74" max="297">
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr class="section-divider">
+        </div>
+
+        <!-- SIZE — Banners (custom only) -->
+        <div class="conditional" id="section-size-banners">
+          <div class="section-title">Banner Size</div>
+          <div class="field-row">
+            <div class="field">
+              <label for="banner_width">Width (mm) <span class="required">*</span></label>
+              <input type="number" id="banner_width" name="banner_width" placeholder="e.g. 2000">
+            </div>
+            <div class="field">
+              <label for="banner_height">Height (mm) <span class="required">*</span></label>
+              <input type="number" id="banner_height" name="banner_height" placeholder="e.g. 800">
+            </div>
+          </div>
+          <hr class="section-divider">
+        </div>
+
+        <!-- FOLD STYLE — Leaflets only -->
+        <div class="conditional" id="section-fold">
+          <div class="section-title">Fold Style</div>
+          <div class="field">
+            <div class="tag-select">
+              <input type="radio" name="fold_style" id="fold_half" value="Half Fold">
+              <label for="fold_half">Half Fold</label>
+              <input type="radio" name="fold_style" id="fold_tri" value="Tri-Fold">
+              <label for="fold_tri">Tri-Fold</label>
+              <input type="radio" name="fold_style" id="fold_z" value="Z-Fold">
+              <label for="fold_z">Z-Fold</label>
+              <input type="radio" name="fold_style" id="fold_gate" value="Gate Fold">
+              <label for="fold_gate">Gate Fold</label>
+              <input type="radio" name="fold_style" id="fold_notsure" value="Not Sure">
+              <label for="fold_notsure">Not Sure</label>
+            </div>
+          </div>
+          <hr class="section-divider">
+        </div>
+
+        <!-- PAGES — Booklets only -->
+        <div class="conditional" id="section-pages">
+          <div class="section-title">Number of Pages</div>
+          <div class="field">
+            <div class="tag-select">
+              <input type="radio" name="pages" id="pages_8" value="8pp">
+              <label for="pages_8">8pp</label>
+              <input type="radio" name="pages" id="pages_12" value="12pp">
+              <label for="pages_12">12pp</label>
+              <input type="radio" name="pages" id="pages_16" value="16pp">
+              <label for="pages_16">16pp</label>
+              <input type="radio" name="pages" id="pages_24" value="24pp">
+              <label for="pages_24">24pp</label>
+              <input type="radio" name="pages" id="pages_32" value="32pp">
+              <label for="pages_32">32pp</label>
+              <input type="radio" name="pages" id="pages_48" value="48pp">
+              <label for="pages_48">48pp</label>
+              <input type="radio" name="pages" id="pages_64" value="64pp">
+              <label for="pages_64">64pp</label>
+              <input type="radio" name="pages" id="pages_custom" value="Custom">
+              <label for="pages_custom">Other</label>
+            </div>
+          </div>
+          <hr class="section-divider">
+        </div>
+
+        <!-- PRINT SIDES — most products -->
+        <div class="conditional" id="section-sides">
+          <div class="section-title">Printed Sides</div>
+          <div class="field">
+            <div class="tag-select">
+              <input type="radio" name="sides" id="sides_single" value="Single Sided">
+              <label for="sides_single">Single Sided</label>
+              <input type="radio" name="sides" id="sides_double" value="Double Sided">
+              <label for="sides_double">Double Sided</label>
+            </div>
+          </div>
+          <hr class="section-divider">
+        </div>
+
+        <!-- PAPER STOCK -->
+        <div class="conditional" id="section-stock">
+          <div class="section-title">Paper Stock</div>
+          <div class="field">
+            <div class="tag-select">
+              <input type="radio" name="stock_type" id="stock_silk" value="Silk">
+              <label for="stock_silk">Silk (Satin finish)</label>
+              <input type="radio" name="stock_type" id="stock_uncoated" value="Uncoated">
+              <label for="stock_uncoated">Uncoated (Natural feel)</label>
+              <input type="radio" name="stock_type" id="stock_gloss" value="Gloss">
+              <label for="stock_gloss">Gloss (Shiny)</label>
+              <input type="radio" name="stock_type" id="stock_notsure" value="Not Sure">
+              <label for="stock_notsure">Not Sure</label>
+            </div>
+          </div>
+
+          <!-- GSM — shown after stock chosen -->
+          <div class="conditional" id="section-gsm" style="margin-top:14px;">
+            <label>Paper Weight (gsm) <span class="hint">heavier = more premium feel</span></label>
+            <div class="tag-select" id="gsmTagSelect" style="margin-top:6px;">
+              <!-- populated by JS -->
+            </div>
+          </div>
+          <hr class="section-divider">
+        </div>
+
+        <!-- QUANTITY -->
+        <div class="field-row">
+          <div class="field">
+            <label for="quantity">Quantity <span class="required">*</span></label>
+            <input type="number" id="quantity" name="quantity" placeholder="e.g. 250" min="1" required>
+          </div>
+          <div class="field">
+            <label for="sets">Number of Sets <span class="hint">e.g. different names</span></label>
+            <select id="sets" name="sets">
+              <option value="1">1 set (same design)</option>
+              <option value="2">2 sets (2 designs)</option>
+              <option value="3">3 sets</option>
+              <option value="4">4 sets</option>
+              <option value="5+">5 or more sets</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ CARD 3: FINISHING ══ -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-header-icon">&#127775;</div>
+        <div class="form-card-header-text">
+          <h2>3. Lamination &amp; Embellishment</h2>
+          <p>Optional finishing options for a premium result</p>
+        </div>
+      </div>
+      <div class="form-card-body">
+
+        <div class="info-box">
+          <strong>Note:</strong> Lamination is only available on Silk stocks of 250gsm or heavier. Embellishment (Spot UV, Foil) requires lamination to be selected first. Not applicable to outdoor banners or uncoated stocks.
+        </div>
+
+        <div class="section-title">Lamination</div>
+        <div class="field">
+          <div class="tag-select">
+            <input type="radio" name="lamination" id="lam_none" value="No Lamination" checked>
+            <label for="lam_none">No Lamination</label>
+            <input type="radio" name="lamination" id="lam_matt_single" value="Matt — Single Sided">
+            <label for="lam_matt_single">Matt — Single</label>
+            <input type="radio" name="lamination" id="lam_matt_double" value="Matt — Double Sided">
+            <label for="lam_matt_double">Matt — Double</label>
+            <input type="radio" name="lamination" id="lam_gloss_single" value="Gloss — Single Sided">
+            <label for="lam_gloss_single">Gloss — Single</label>
+            <input type="radio" name="lamination" id="lam_gloss_double" value="Gloss — Double Sided">
+            <label for="lam_gloss_double">Gloss — Double</label>
+            <input type="radio" name="lamination" id="lam_soft_single" value="Soft-Touch — Single Sided">
+            <label for="lam_soft_single">Soft-Touch — Single</label>
+            <input type="radio" name="lamination" id="lam_soft_double" value="Soft-Touch — Double Sided">
+            <label for="lam_soft_double">Soft-Touch — Double</label>
+          </div>
+        </div>
+
+        <!-- Embellishment — only shown if lamination selected -->
+        <div class="conditional" id="section-embellishment">
+          <hr class="section-divider">
+          <div class="section-title">Embellishment</div>
+          <div class="field">
+            <div class="tag-select">
+              <input type="radio" name="embellishment" id="emb_none" value="None" checked>
+              <label for="emb_none">None</label>
+              <input type="radio" name="embellishment" id="emb_spotuv_single" value="Spot UV — Single Sided">
+              <label for="emb_spotuv_single">Spot UV — Single</label>
+              <input type="radio" name="embellishment" id="emb_spotuv_double" value="Spot UV — Double Sided">
+              <label for="emb_spotuv_double">Spot UV — Double</label>
+              <input type="radio" name="embellishment" id="emb_gold" value="Gold Foil — Single Sided">
+              <label for="emb_gold">Gold Foil</label>
+              <input type="radio" name="embellishment" id="emb_silver" value="Silver Foil — Single Sided">
+              <label for="emb_silver">Silver Foil</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ CARD 4: DETAILS ══ -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-header-icon">&#128221;</div>
+        <div class="form-card-header-text">
+          <h2>4. Your Details &amp; Artwork</h2>
+          <p>How to reach you and any artwork notes</p>
+        </div>
+      </div>
+      <div class="form-card-body">
+
+        <div class="section-title">Contact Information</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="first_name">First Name <span class="required">*</span></label>
+            <input type="text" id="first_name" name="first_name" placeholder="Jane" required>
+          </div>
+          <div class="field">
+            <label for="last_name">Last Name <span class="required">*</span></label>
+            <input type="text" id="last_name" name="last_name" placeholder="Smith" required>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" placeholder="jane@company.com" required>
+          </div>
+          <div class="field">
+            <label for="phone">Phone <span class="hint">optional</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="07700 000000">
+          </div>
+        </div>
+        <div class="field">
+          <label for="company">Company / Organisation <span class="hint">optional</span></label>
+          <input type="text" id="company" name="company" placeholder="Acme Ltd">
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-title">Deadline &amp; Delivery</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="deadline">Required By <span class="hint">approximate is fine</span></label>
+            <input type="text" id="deadline" name="deadline" placeholder="e.g. end of April, 15 May">
+          </div>
+          <div class="field">
+            <label for="delivery_postcode">Delivery Postcode</label>
+            <input type="text" id="delivery_postcode" name="delivery_postcode" placeholder="e.g. SW1A 1AA">
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-title">Artwork</div>
+
+        <div class="toggle-row" id="artworkToggleRow" onclick="toggleArtwork()">
+          <div>
+            <div class="toggle-row-text">I have artwork ready to share</div>
+            <div class="toggle-row-sub">Toggle off if you need help with artwork or don&rsquo;t have a file yet</div>
+          </div>
+          <label class="toggle" onclick="event.stopPropagation()">
+            <input type="checkbox" id="artworkToggle" onchange="toggleArtwork()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="conditional" id="artwork-upload-section">
+          <div class="field">
+            <label>Upload Artwork File <span class="hint">optional — you can email after</span></label>
+            <div class="file-upload-area" id="fileUploadArea">
+              <input type="file" id="artwork_file" name="artwork_file" accept=".pdf,.ai,.eps,.psd,.png,.jpg,.jpeg,.svg" onchange="handleFileSelect(this)">
+              <div class="file-upload-icon">&#128196;</div>
+              <div class="file-upload-text">Click to upload or drag &amp; drop</div>
+              <div class="file-upload-sub">PDF, AI, EPS, PSD, PNG, JPG &mdash; max 20MB</div>
+              <div class="file-name" id="fileName"></div>
+            </div>
+          </div>
+          <div class="success-box">
+            <strong>Artwork specs:</strong> 300dpi minimum &middot; CMYK colour mode &middot; 3mm bleed &middot; Crop marks included &middot; Fonts embedded or outlined
+          </div>
+        </div>
+
+        <div class="conditional visible" id="artwork-help-section">
+          <div class="field">
+            <label for="artwork_notes">Describe your design or artwork needs</label>
+            <textarea id="artwork_notes" name="artwork_notes" placeholder="e.g. We have a logo in PNG format and need the design laid out. Our brand colours are navy and gold. We want the company name on the front and contact details on the back..."></textarea>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-title">Anything Else?</div>
+        <div class="field">
+          <label for="additional_notes">Additional Notes <span class="hint">optional</span></label>
+          <textarea id="additional_notes" name="additional_notes" placeholder="Any other requirements, questions, or context that will help us quote accurately..." style="min-height:80px;" maxlength="1000" oninput="updateCharCount(this, 'notesCount')"></textarea>
+          <div class="char-counter"><span id="notesCount">0</span> / 1000</div>
+        </div>
+
+        <!-- hidden field to capture full spec summary -->
+        <input type="hidden" id="spec_summary" name="spec_summary" value="">
+
+        <div class="submit-area">
+          <button type="submit" class="btn-submit">&#128231; Send My Quote Request &rarr;</button>
+          <div class="submit-note">We&rsquo;ll reply to your email within 1 working day with a full quote.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </form>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="form-card" id="successCard" style="display:none;">
+    <div class="success-screen visible">
+      <div class="success-icon">&#10003;</div>
+      <h2>Quote Request Sent!</h2>
+      <p>Thanks &mdash; we&rsquo;ve received your request and will come back with a full quote within <strong>1 working day</strong>.</p>
+      <p style="margin-bottom:24px;">Check your inbox at <strong id="confirmEmail"></strong> for confirmation.</p>
+      <button class="btn-reset" onclick="resetForm()">Submit Another Quote Request</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── PRODUCT CONFIG ──
+const productConfig = {
+  'Flyers': {
+    sizes: ['A3','A4','A5','A6','A7','DL','148×148mm','210×210mm','A4 Slim','A5 Slim','Custom'],
+    showSides: true, showStock: true, showFold: false, showPages: false, showBannerSize: false,
+    silkGsm: ['115gsm','150gsm','170gsm','250gsm','350gsm','450gsm'],
+    uncoatedGsm: ['90gsm','120gsm','170gsm','250gsm','350gsm'],
+    glossGsm: ['130gsm']
+  },
+  'Folded Leaflets': {
+    sizes: ['A4','A5','DL'],
+    showSides: false, showStock: true, showFold: true, showPages: false, showBannerSize: false,
+    silkGsm: ['115gsm','150gsm','170gsm','250gsm','350gsm','450gsm'],
+    uncoatedGsm: ['90gsm','120gsm','170gsm','250gsm','350gsm'],
+    glossGsm: ['130gsm']
+  },
+  'Posters': {
+    sizes: ['A3','A2','A1','Custom'],
+    showSides: true, showStock: true, showFold: false, showPages: false, showBannerSize: false,
+    silkGsm: ['115gsm','150gsm','170gsm','250gsm','350gsm'],
+    uncoatedGsm: ['90gsm','120gsm','170gsm','250gsm'],
+    glossGsm: []
+  },
+  'Stapled Booklets': {
+    sizes: ['A5','A4'],
+    showSides: false, showStock: true, showFold: false, showPages: true, showBannerSize: false,
+    silkGsm: ['115gsm (inner)','150gsm (inner)','170gsm (inner)','250gsm (cover)','350gsm (cover)'],
+    uncoatedGsm: ['90gsm (inner)','120gsm (inner)'],
+    glossGsm: []
+  },
+  'Business Cards': {
+    sizes: ['55×85mm (Standard)','85×55mm (Landscape)'],
+    showSides: true, showStock: true, showFold: false, showPages: false, showBannerSize: false,
+    silkGsm: ['350gsm','450gsm'],
+    uncoatedGsm: ['350gsm'],
+    glossGsm: []
+  },
+  'Labels & Stickers': {
+    sizes: ['A4 Sheet','A5 Sheet','A3 Sheet','Custom Sheet','Custom Reel'],
+    showSides: false, showStock: false, showFold: false, showPages: false, showBannerSize: false,
+    silkGsm: [], uncoatedGsm: [], glossGsm: []
+  },
+  'Outdoor Banners': {
+    sizes: [],
+    showSides: true, showStock: false, showFold: false, showPages: false, showBannerSize: true,
+    silkGsm: [], uncoatedGsm: [], glossGsm: []
+  },
+  'Other / Not Sure': {
+    sizes: [], showSides: false, showStock: false, showFold: false, showPages: false, showBannerSize: false,
+    silkGsm: [], uncoatedGsm: [], glossGsm: []
+  }
+};
+
+let selectedProduct = null;
+let selectedStockType = null;
+
+// ── PRODUCT CHANGE ──
+document.querySelectorAll('input[name="product"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    selectedProduct = radio.value;
+    updateProductSections(selectedProduct);
+    updateProgress();
+  });
+});
+
+function updateProductSections(product) {
+  const cfg = productConfig[product] || {};
+
+  // sizes
+  const sizeSection = document.getElementById('section-size-standard');
+  const bannerSection = document.getElementById('section-size-banners');
+
+  if (cfg.showBannerSize) {
+    show('section-size-banners'); hide('section-size-standard');
+  } else if (cfg.sizes && cfg.sizes.length > 0) {
+    show('section-size-standard'); hide('section-size-banners');
+    buildSizeTags(cfg.sizes);
+  } else {
+    hide('section-size-standard'); hide('section-size-banners');
+  }
+
+  cfg.showFold ? show('section-fold') : hide('section-fold');
+  cfg.showPages ? show('section-pages') : hide('section-pages');
+  cfg.showSides ? show('section-sides') : hide('section-sides');
+  cfg.showStock ? show('section-stock') : hide('section-stock');
+
+  // reset GSM
+  hide('section-gsm');
+  selectedStockType = null;
+}
+
+function buildSizeTags(sizes) {
+  const container = document.getElementById('sizeTagSelect');
+  container.innerHTML = '';
+  sizes.forEach((size, i) => {
+    const id = 'size_' + i;
+    const input = document.createElement('input');
+    input.type = 'radio'; input.name = 'size'; input.id = id; input.value = size;
+    if (size === 'Custom') {
+      input.addEventListener('change', () => show('custom-size-fields'));
+    }
+    const label = document.createElement('label');
+    label.htmlFor = id; label.textContent = size;
+    container.appendChild(input);
+    container.appendChild(label);
+  });
+
+  // hide custom size fields when non-custom chosen
+  container.querySelectorAll('input[type="radio"]').forEach(r => {
+    if (r.value !== 'Custom') {
+      r.addEventListener('change', () => hide('custom-size-fields'));
+    }
+  });
+}
+
+// ── STOCK CHANGE ──
+document.querySelectorAll('input[name="stock_type"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    selectedStockType = radio.value;
+    updateGsm(selectedStockType);
+  });
+});
+
+function updateGsm(stockType) {
+  if (!selectedProduct) return;
+  const cfg = productConfig[selectedProduct];
+  let gsmOptions = [];
+
+  if (stockType === 'Silk') gsmOptions = cfg.silkGsm || [];
+  else if (stockType === 'Uncoated') gsmOptions = cfg.uncoatedGsm || [];
+  else if (stockType === 'Gloss') gsmOptions = cfg.glossGsm || [];
+
+  const container = document.getElementById('gsmTagSelect');
+  container.innerHTML = '';
+
+  if (gsmOptions.length === 0) { hide('section-gsm'); return; }
+
+  gsmOptions.forEach((gsm, i) => {
+    const id = 'gsm_' + i;
+    const input = document.createElement('input');
+    input.type = 'radio'; input.name = 'gsm'; input.id = id; input.value = gsm;
+    const label = document.createElement('label');
+    label.htmlFor = id; label.textContent = gsm;
+    container.appendChild(input);
+    container.appendChild(label);
+  });
+
+  show('section-gsm');
+}
+
+// ── LAMINATION → EMBELLISHMENT ──
+document.querySelectorAll('input[name="lamination"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    if (radio.value === 'No Lamination') {
+      hide('section-embellishment');
+      const noneEmb = document.getElementById('emb_none');
+      if (noneEmb) noneEmb.checked = true;
+    } else {
+      show('section-embellishment');
+    }
+    updateProgress();
+  });
+});
+
+// ── ARTWORK TOGGLE ──
+function toggleArtwork() {
+  const toggle = document.getElementById('artworkToggle');
+  if (toggle.checked) {
+    show('artwork-upload-section');
+    hide('artwork-help-section');
+  } else {
+    hide('artwork-upload-section');
+    show('artwork-help-section');
+  }
+}
+
+// ── FILE SELECT ──
+function handleFileSelect(input) {
+  const fileName = document.getElementById('fileName');
+  if (input.files && input.files[0]) {
+    fileName.textContent = '✓ ' + input.files[0].name;
+    fileName.style.display = 'block';
+  }
+}
+
+// drag over styling
+const uploadArea = document.getElementById('fileUploadArea');
+if (uploadArea) {
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); });
+}
+
+// ── CHAR COUNTER ──
+function updateCharCount(el, counterId) {
+  document.getElementById(counterId).textContent = el.value.length;
+}
+
+// ── PROGRESS ──
+function updateProgress() {
+  const productSelected = !!selectedProduct;
+  const lamSelected = document.querySelector('input[name="lamination"]:checked')?.value !== 'No Lamination';
+
+  setStep(1, productSelected ? 'done' : 'active');
+  setStep(2, productSelected ? 'active' : '');
+  setStep(3, lamSelected ? 'done' : productSelected ? 'active' : '');
+  setStep(4, productSelected ? 'active' : '');
+
+  document.getElementById('line1').classList.toggle('done', productSelected);
+}
+
+function setStep(n, state) {
+  const el = document.getElementById('step' + n + '-indicator');
+  if (!el) return;
+  el.className = 'progress-step' + (state ? ' ' + state : '');
+}
+
+// ── HELPERS ──
+function show(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('visible'); }
+}
+function hide(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.remove('visible'); }
+}
+
+// ── FORM SUBMIT ──
+document.getElementById('quoteForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // Build spec summary
+  const product = document.querySelector('input[name="product"]:checked')?.value || '';
+  const size = document.querySelector('input[name="size"]:checked')?.value || '';
+  const fold = document.querySelector('input[name="fold_style"]:checked')?.value || '';
+  const pages = document.querySelector('input[name="pages"]:checked')?.value || '';
+  const sides = document.querySelector('input[name="sides"]:checked')?.value || '';
+  const stock = document.querySelector('input[name="stock_type"]:checked')?.value || '';
+  const gsm = document.querySelector('input[name="gsm"]:checked')?.value || '';
+  const lam = document.querySelector('input[name="lamination"]:checked')?.value || '';
+  const emb = document.querySelector('input[name="embellishment"]:checked')?.value || '';
+  const qty = document.getElementById('quantity').value;
+
+  let summary = `Product: ${product}`;
+  if (size) summary += ` | Size: ${size}`;
+  if (fold) summary += ` | Fold: ${fold}`;
+  if (pages) summary += ` | Pages: ${pages}`;
+  if (sides) summary += ` | Sides: ${sides}`;
+  if (stock) summary += ` | Stock: ${stock}`;
+  if (gsm) summary += ` | Weight: ${gsm}`;
+  if (lam) summary += ` | Lamination: ${lam}`;
+  if (emb && emb !== 'None') summary += ` | Embellishment: ${emb}`;
+  if (qty) summary += ` | Qty: ${qty}`;
+
+  document.getElementById('spec_summary').value = summary;
+
+  // Disable button and show loading state
+  const btn = document.querySelector('.btn-submit');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '&#8987; Sending...';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+
+  try {
+    const formData = new FormData(this);
+    const response = await fetch('https://formspree.io/f/xykngdgj', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.ok) {
+      // Show success
+      const emailEl = document.getElementById('email');
+      document.getElementById('confirmEmail').textContent = emailEl ? emailEl.value : 'your email';
+      document.getElementById('quoteForm').style.display = 'none';
+      document.getElementById('successCard').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const data = await response.json();
+      const errorMsg = data?.errors?.map(e => e.message).join(', ') || 'Something went wrong. Please try again or email us directly at info@muselystudio.com';
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      showFormError(errorMsg);
+    }
+  } catch (err) {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    showFormError('Could not send your request. Please check your connection or email us directly at info@muselystudio.com');
+  }
+});
+
+function showFormError(msg) {
+  let existing = document.getElementById('form-error-msg');
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.id = 'form-error-msg';
+    existing.style.cssText = 'background:#FDECEA;border-left:4px solid #B71C1C;border-radius:0 6px 6px 0;padding:12px 16px;font-size:14px;color:#7B0000;margin-top:16px;line-height:1.5;';
+    document.querySelector('.submit-area').after(existing);
+  }
+  existing.innerHTML = '&#9888; ' + msg;
+  existing.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function resetForm() {
+  document.getElementById('quoteForm').reset();
+  document.getElementById('quoteForm').style.display = 'block';
+  document.getElementById('successCard').style.display = 'none';
+  selectedProduct = null;
+  selectedStockType = null;
+  ['section-size-standard','section-size-banners','section-fold','section-pages',
+   'section-sides','section-stock','section-gsm','section-embellishment',
+   'custom-size-fields','artwork-upload-section'].forEach(hide);
+  show('artwork-help-section');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
